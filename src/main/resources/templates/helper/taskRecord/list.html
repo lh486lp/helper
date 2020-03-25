@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-content" id="requireBox" style="display: none;">
+                <form class="form-horizontal m-t" id="search">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">任务期数：</label>
+                        <div class="col-sm-4">
+                            <input id="issue" name="issue" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">任务状态：</label>
+                        <div class="col-sm-4">
+                            <select id="status" name="status" class="form-control">
+                                <option value="">--请选择--</option>
+                                <option value="0">进行中</option>
+                                <option value="1">待审核</option>
+                                <option value="2">已失效</option>
+                                <option value="3">已完成</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-4">
+                            <select id="visible" name="visible" class="form-control">
+                                <option value="">--请选择--</option>
+                                <option value="0">禁用</option>
+                                <option value="1">启用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">创建时间：</label>
+                        <div class="col-sm-4">
+                            <input id="createTimeBegin" name="createTimeBegin" type="text" class="form-control"
+                                   placeholder="创建时间始">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="createTimeEnd" name="createTimeEnd" type="text" class="form-control"
+                                   placeholder="创建时间止">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">操作时间：</label>
+                        <div class="col-sm-4">
+                            <input id="updateTimeBegin" name="updateTimeBegin" type="text" class="form-control"
+                                   placeholder="操作时间始">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="updateTimeEnd" name="updateTimeEnd" type="text" class="form-control"
+                                   placeholder="操作时间止">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="ibox-body">
+                <div class="fixed-table-toolbar">
+                    <div class="columns pull-right">
+                        <button type="button" class="btn btn-outline dropup" style="border-color: #c2c2c2;outline: none;"
+                                onclick="$('#requireBox').slideToggle();">
+                            <i class="glyphicon glyphicon-th icon-th"></i>
+                            <span class="caret"></span>
+                        </button>
+                        <button class="btn btn-success" onclick="reLoad()">查询</button>
+                        <button class="btn btn-default" onclick="$('#search')[0].reset();">清空</button>
+                    </div>
+                </div>
+                <table id="exampleTable" data-mobile-responsive="false">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--shiro控制bootstraptable行内按钮看见性 来自bootdo的创新方案 -->
+<div>
+    <script type="text/javascript">
+        var s_edit_h = 'hidden';
+        var s_remove_h = 'hidden';
+        var s_resetPwd_h = 'hidden';
+    </script>
+</div>
+<div shiro:hasPermission="helper:taskRecord:manage:edit">
+    <script type="text/javascript">
+        s_edit_h = '';
+    </script>
+</div>
+<div shiro:hasPermission="helper:taskRecord:manage:remove">
+    <script type="text/javascript">
+        var s_remove_h = '';
+    </script>
+</div>
+<div shiro:hasPermission="helper:taskRecord:manage:resetPwd">
+    <script type="text/javascript">
+        var s_resetPwd_h = '';
+    </script>
+</div>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript" src="/js/appjs/helper/taskRecord/list.js"></script>
+</body>
+</html>

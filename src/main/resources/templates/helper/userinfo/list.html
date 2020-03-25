@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-content" id="requireBox" style="display: none;">
+                <form class="form-horizontal m-t" id="search">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户id：</label>
+                        <div class="col-sm-4">
+                            <input id="userId" name="userId" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">师父id：</label>
+                        <div class="col-sm-4">
+                            <input id="parentId" name="parentId" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">登录名：</label>
+                        <div class="col-sm-4">
+                            <input id="username" name="username" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">登录密码：</label>
+                        <div class="col-sm-4">
+                            <input id="password" name="password" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">资金密码：</label>
+                        <div class="col-sm-4">
+                            <input id="accountPassword" name="accountPassword" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">昵称：</label>
+                        <div class="col-sm-4">
+                            <input id="nickName" name="nickName" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">头像：</label>
+                        <div class="col-sm-4">
+                            <input id="imgPath" name="imgPath" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">身份证：</label>
+                        <div class="col-sm-4">
+                            <input id="idCard" name="idCard" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">手机号：</label>
+                        <div class="col-sm-4">
+                            <input id="phone" name="phone" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">推广码：</label>
+                        <div class="col-sm-4">
+                            <input id="rcode" name="rcode" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">会员等级：</label>
+                        <div class="col-sm-4">
+                            <input id="vipLevel" name="vipLevel" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">城主类型：</label>
+                        <div class="col-sm-4">
+                            <input id="castellanLevel" name="castellanLevel" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">当天完成金牌任务数量：</label>
+                        <div class="col-sm-4">
+                            <input id="goldCount" name="goldCount" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">当天完成钻石任务数量：</label>
+                        <div class="col-sm-4">
+                            <input id="diamondCount" name="diamondCount" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-4">
+                            <input id="visible" name="visible" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">操作人：</label>
+                        <div class="col-sm-4">
+                            <input id="opsUserId" name="opsUserId" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">注册时间：</label>
+                        <div class="col-sm-4">
+                            <input id="createTimeBegin" name="createTimeBegin" type="text" class="form-control"
+                                   placeholder="注册时间始">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="createTimeEnd" name="createTimeEnd" type="text" class="form-control"
+                                   placeholder="注册时间止">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">修改时间：</label>
+                        <div class="col-sm-4">
+                            <input id="updateTimeBegin" name="updateTimeBegin" type="text" class="form-control"
+                                   placeholder="修改时间始">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="updateTimeEnd" name="updateTimeEnd" type="text" class="form-control"
+                                   placeholder="修改时间止">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="ibox-body">
+                <div class="fixed-table-toolbar">
+                    <div class="columns pull-left">
+                        <button shiro:hasPermission="helper:userinfo:manage:batchRemove" type="button" class="btn  btn-danger"
+                                onclick="batchRemove()">
+                            <i class="fa fa-trash" aria-hidden="true"></i>删除
+                        </button>
+                    </div>
+                    <div class="columns pull-right">
+                        <button type="button" class="btn btn-outline dropup" style="border-color: #c2c2c2;outline: none;"
+                                onclick="$('#requireBox').slideToggle();">
+                            <i class="glyphicon glyphicon-th icon-th"></i>
+                            <span class="caret"></span>
+                        </button>
+                        <button class="btn btn-success" onclick="reLoad()">查询</button>
+                        <button class="btn btn-default" onclick="$('#search')[0].reset();">清空</button>
+                    </div>
+
+                </div>
+                <table id="exampleTable" data-mobile-responsive="false">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--shiro控制bootstraptable行内按钮看见性 来自bootdo的创新方案 -->
+<div>
+    <script type="text/javascript">
+        var s_edit_h = 'hidden';
+        var s_remove_h = 'hidden';
+        var s_resetPwd_h = 'hidden';
+    </script>
+</div>
+<div shiro:hasPermission="helper:userinfo:manage:edit">
+    <script type="text/javascript">
+        s_edit_h = '';
+    </script>
+</div>
+<div shiro:hasPermission="helper:userinfo:manage:remove">
+    <script type="text/javascript">
+        var s_remove_h = '';
+    </script>
+</div>
+<div shiro:hasPermission="helper:userinfo:manage:resetPwd">
+    <script type="text/javascript">
+        var s_resetPwd_h = '';
+    </script>
+</div>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript" src="/js/appjs/helper/userinfo/list.js"></script>
+</body>
+</html>

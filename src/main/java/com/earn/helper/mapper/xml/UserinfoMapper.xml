@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earn.helper.mapper.UserinfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Userinfo">
+        <id column="user_id" property="userId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="account_password" property="accountPassword"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="img_path" property="imgPath"/>
+        <result column="id_Card" property="idCard"/>
+        <result column="phone" property="phone"/>
+        <result column="rcode" property="rcode"/>
+        <result column="vip_level" property="vipLevel"/>
+        <result column="castellan_level" property="castellanLevel"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="getMyFansCount" resultType="int">
+        select count(1)
+        from userinfo a
+        where a.PARENT_ID = #{userId, jdbcType=INTEGER}
+    </select>
+
+    <select id="getMyFansFansCount" resultType="int">
+        select count(1)
+        from userinfo a
+        where a.PARENT_ID in
+              (select b.user_id
+               from userinfo b
+               where b.PARENT_ID = #{userId, jdbcType=INTEGER})
+    </select>
+    <select id="getMyFansLevelCount" resultType="java.util.Map">
+        SELECT
+            count(1) as count,
+            a.vip_level
+        FROM
+            userinfo a
+        WHERE
+            a.PARENT_ID = #{userId, jdbcType=INTEGER}
+        GROUP BY
+            a.vip_level
+    </select>
+    <select id="getMyFansFansLevelCount" resultType="java.util.Map">
+        SELECT
+            count(1) AS count,
+            a.vip_level
+        FROM
+            userinfo a
+        WHERE
+            a.PARENT_ID IN (SELECT b.user_id
+                            FROM userinfo b
+                            WHERE b.PARENT_ID = #{userId, jdbcType=INTEGER})
+        GROUP BY
+            a.vip_level;
+    </select>
+    <select id="getMyFansList" resultType="com.earn.helper.entity.Userinfo">
+        SELECT
+            a.IMG_PATH,
+            a.NICK_NAME
+        FROM
+            userinfo a
+        WHERE
+            a.PARENT_ID = #{userId, jdbcType=INTEGER}
+            AND VIP_LEVEL = #{vipLevel, jdbcType=INTEGER}
+    </select>
+    <select id="getMyFansFansList" resultType="com.earn.helper.entity.Userinfo">
+        SELECT
+            a.IMG_PATH,
+            a.NICK_NAME
+        FROM
+            userinfo a
+        WHERE
+            a.PARENT_ID IN (SELECT b.user_id
+                            FROM userinfo b
+                            WHERE b.PARENT_ID = #{userId, jdbcType=INTEGER})
+            AND VIP_LEVEL = #{vipLevel, jdbcType=INTEGER}
+    </select>
+</mapper>

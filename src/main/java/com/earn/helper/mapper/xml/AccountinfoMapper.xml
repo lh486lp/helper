@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earn.helper.mapper.AccountinfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Accountinfo">
+        <id column="account_id" property="accountId"/>
+        <result column="user_id" property="userId"/>
+        <result column="type" property="type"/>
+        <result column="type" property="accountType" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="type_id" property="typeId"/>
+        <result column="amount" property="amount"/>
+        <result column="is_gain" property="isGain"/>
+        <result column="pay_type" property="payType"/>
+        <result column="img_path" property="imgPath"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="userinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectListPage" resultMap="BaseResultMap">
+        select * from accountinfo a
+        left join userinfo b on a.USER_ID = b.USER_ID
+        left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="accountinfo.accountId != null">
+                and a.ACCOUNT_ID = #{accountinfo.accountId,jdbcType=INTEGER}
+            </if>
+            <if test="accountinfo.userId != null">
+                and a.USER_ID = #{accountinfo.userId,jdbcType=INTEGER}
+            </if>
+            <if test="accountinfo.type != null and accountinfo.type != 0">
+                and a.TYPE = #{accountinfo.type,jdbcType=INTEGER}
+            </if>
+            <if test="accountinfo.amount != null">
+                and a.AMOUNT = #{accountinfo.amount,jdbcType=BIGDECIMAL}
+            </if>
+            <if test="accountinfo.isGain != null">
+                and a.IS_GAIN = #{accountinfo.isGain,jdbcType=VARCHAR}
+            </if>
+            <if test="accountinfo.payType != null">
+                and a.PAY_TYPE = #{accountinfo.payType,jdbcType=VARCHAR}
+            </if>
+            <if test="accountinfo.visible != null">
+                and a.VISIBLE = #{accountinfo.visible,jdbcType=INTEGER}
+            </if>
+            <if test="accountinfo.opsUserinfo != null and accountinfo.opsUserinfo.userId != null">
+                and u.OPS_USER_ID = #{accountinfo.opsUserinfo.userId,jdbcType=INTEGER}
+            </if>
+            <if test="accountinfo.createTime != null">
+                and a.CREATE_TIME = #{accountinfo.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="accountinfo.updateTime != null">
+                and a.UPDATE_TIME = #{accountinfo.updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by a.ACCOUNT_ID desc
+    </select>
+    <select id="getAmount" resultType="java.lang.Double">
+        select IFNULL(SUM(amount*is_gain), 0) amount FROM accountinfo a
+        <where>
+            <if test="userId != null">
+                and a.USER_ID = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="type != null and type != 0">
+                and a.TYPE = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="isGain != null">
+                and a.IS_GAIN = #{isGain,jdbcType=VARCHAR}
+            </if>
+            <if test="visible != null">
+                and a.VISIBLE = #{visible,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and a.CREATE_TIME &gt;= DATE_FORMAT(#{createTime}, '%Y-%m-%d')
+                and a.CREATE_TIME &lt; date_sub(DATE_FORMAT(#{createTime}, '%Y-%m-%d'),interval -1 day)
+            </if>
+        </where>
+    </select>
+    <select id="getWithdraw" resultType="java.lang.Double">
+        select IFNULL(SUM(amount), 0) amount FROM accountinfo a
+        <where>
+            <if test="userId != null">
+                and a.USER_ID = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="type != null and type != 0">
+                and a.TYPE = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="isGain != null">
+                and a.IS_GAIN = #{isGain,jdbcType=VARCHAR}
+            </if>
+            <if test="visible != null">
+                and a.VISIBLE = #{visible,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and a.CREATE_TIME &gt;= DATE_FORMAT(#{createTime}, '%Y-%m-%d')
+                and a.CREATE_TIME &lt; date_sub(DATE_FORMAT(#{createTime}, '%Y-%m-%d'),interval -1 day)
+            </if>
+        </where>
+    </select>
+</mapper>

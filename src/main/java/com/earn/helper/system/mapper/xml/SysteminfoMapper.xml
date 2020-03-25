@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.earn.helper.system.mapper.SysteminfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Systeminfo">
+        <id column="_key" property="key"/>
+        <result column="value" property="value"/>
+        <result column="description" property="description"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="get" resultMap="BaseResultMap">
+        select
+            a.*,
+            u.user_id,
+            u.nick_name
+        from systeminfo a
+            left join userinfo u on a.ops_user_id = u.user_id
+        where _key = #{value}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        a.*,
+        u.user_id,
+        u.nick_name
+        from systeminfo a
+        left join userinfo u on a.ops_user_id = u.user_id
+        <where>
+            <if test="key != null and key != ''">and a._key = #{key}</if>
+            <if test="value != null and value != ''">and a.value = #{value}</if>
+            <if test="description != null and description != ''">and a.description = #{description}</if>
+            <if test="visible != null and visible != ''">and a.visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and a.ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and a.create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and a.create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and a.create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and a.update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and a.update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and a.update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by a._key desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from systeminfo
+        <where>
+            <if test="key != null and key != ''">and _key = #{key}</if>
+            <if test="value != null and value != ''">and value = #{value}</if>
+            <if test="description != null and description != ''">and description = #{description}</if>
+            <if test="visible != null and visible != ''">and visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.earn.helper.entity.Systeminfo">
+        insert into systeminfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="key != null">`_key`,</if>
+            <if test="value != null">`value`,</if>
+            <if test="description != null">`description`,</if>
+            <if test="visible != null">`visible`,</if>
+            <if test="opsUserId != null">`ops_user_id`,</if>
+            <if test="createTime != null">`create_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="key != null">#{key},</if>
+            <if test="value != null">#{value},</if>
+            <if test="description != null">#{description},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="opsUserId != null">#{opsUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.earn.helper.entity.Systeminfo">
+        update systeminfo
+        <set>
+            <if test="value != null">`value` = #{value},</if>
+            <if test="description != null">`description` = #{description},</if>
+            <if test="visible != null">`visible` = #{visible},</if>
+            <if test="opsUserId != null">`ops_user_id` = #{opsUserId},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+        </set>
+        where _key = #{key}
+    </update>
+
+    <delete id="remove">
+        delete from systeminfo
+        where _key = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from systeminfo where _key in
+        <foreach item="key" collection="array" open="(" separator="," close=")">
+            #{key}
+        </foreach>
+    </delete>
+
+</mapper>

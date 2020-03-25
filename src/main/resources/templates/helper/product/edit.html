@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal m-t" id="signupForm">
+                        <input id="productId" name="productId" th:value="${product.productId}" type="hidden">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品名称：</label>
+                            <div class="col-sm-8">
+                                <input id="productName" name="productName" th:value="${product.productName}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">价格：</label>
+                            <div class="col-sm-8">
+                                <input id="productPrice" name="productPrice" th:value="${product.productPrice}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">优惠价格：</label>
+                            <div class="col-sm-8">
+                                <input id="preferentialPrice" name="preferentialPrice" th:value="${product.preferentialPrice}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">封面图片：</label>
+                            <div class="col-sm-8">
+                                <input id="imgPath" name="imgPath" th:value="${product.imgPath}" class="form-control" type="text">
+                                <div class='btn btn-primary' style="position: relative">
+                                    <span>选择文件</span>
+                                    <input type="file"
+                                           id="imgfile"
+                                           enctype="multipart/form-data"
+                                           accept="image/*"
+                                           style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;width: 100%;z-index: 2;opacity:0;"
+                                           onchange="groupfolder.onchangeText('imgfile', 'onchangeText', 'preview')">
+                                </div>
+                                <a class="btn btn-primary" id="btn_uploadimg" onclick="groupfolder.uploadimg('imgfile','imgPath');">上传图片</a>
+                                <div>
+                                    <img id="preview" style="width:150px;" th:src="@{/system/sysFile/getFile?fileName={filename}(filename=${product.imgPath})}"/>
+                                </div>
+                                <div>
+                                    <span id="onchangeText"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">banner图片：</label>
+                            <div class="col-sm-8">
+                                <input id="imgPaths" name="imgPaths" th:value="${product.imgPaths}" class="form-control" type="text">
+                                <div class='btn btn-primary' style="position: relative">
+                                    <span>选择文件</span>
+                                    <input type="file" multiple
+                                           id="imgfiles"
+                                           enctype="multipart/form-data"
+                                           accept="image/*"
+                                           style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;width: 100%;z-index: 2;opacity:0;"
+                                           onchange="groupfolder.onchangeTexts('imgfiles', 'onchangeTexts', 'previews')">
+                                </div>
+                                <a class="btn btn-primary" id="btn_uploadimgs" onclick="groupfolder.uploadimgs('imgfiles','imgPaths');">上传图片</a>
+                                <div id="previews" class="preview">
+                                    <div class="img-item" style="display: inline-block;" th:each="path : ${imgPaths}">
+                                        <span class="delete-old" th:data-filename="${path}">x</span>
+                                        <img th:src="@{/system/sysFile/getFile?fileName={filename}(filename=${path})}" class="img-preview-sm"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品规格：</label>
+                            <div class="col-sm-8">
+                                <input id="specification" name="specification" th:value="${product.specification}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商品介绍：</label>
+                            <div class="col-sm-8">
+                                <input id="introduction" name="introduction" th:value="${product.introduction}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">图文详情：</label>
+                            <div class="col-sm-8">
+                                <input id="content" name="content" th:value="${product.content}" class="form-control" type="hidden">
+                                <div class="ibox-content no-padding">
+                                    <div id="content_sn" class="summernote"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">类型：</label>
+                            <div class="col-sm-8">
+                                <select id="productType" name="productType" class="form-control">
+                                    <option value="0" th:selected="${product.productType}==0">推广</option>
+                                    <option value="1" th:selected="${product.productType}==1">普通</option>
+                                    <option value="2" th:selected="${product.productType}==2">金牌</option>
+                                    <option value="3" th:selected="${product.productType}==3">钻石</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="/js/appjs/helper/product/edit.js">
+</script>
+</body>
+</html>

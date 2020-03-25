@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.earn.helper.system.mapper.OrderinfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Orderinfo">
+        <id column="order_id" property="orderId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="product_unit_price" property="productUnitPrice"/>
+        <result column="product_count" property="productCount"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="post_type" property="postType"/>
+        <result column="post_no" property="postNo"/>
+        <result column="post_time" property="postTime"/>
+        <result column="status" property="status"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="userinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="USER_NICK_NAME" property="nickName"/>
+        </association>
+        <association property="address" javaType="com.earn.helper.entity.Address">
+            <id column="ADDR_ID" property="addrId"/>
+            <result column="PROVINCE" property="province"/>
+            <result column="AREA" property="area"/>
+            <result column="TOWN" property="town"/>
+            <result column="DETAIL" property="detail"/>
+            <result column="RECEIVER_NAME" property="receiverName"/>
+            <result column="RECEIVER_PHONE" property="receiverPhone"/>
+        </association>
+        <association property="product" javaType="com.earn.helper.entity.Product">
+            <id column="PRODUCT_ID" property="productId"/>
+            <result column="PRODUCT_NAME" property="productName"/>
+            <result column="IMG_PATH" property="imgPath"/>
+            <result column="PRODUCT_PRICE" property="productPrice"/>
+            <result column="PREFERENTIAL_PRICE" property="preferentialPrice"/>
+        </association>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="get" resultMap="BaseResultMap">
+        select a.*, b.nick_name as user_nick_name, c.product_name, c.img_path, c.product_price, c.PREFERENTIAL_PRICE,
+            d.province, d.area, d.town, d.detail, d.receiver_name, d.receiver_phone, u.nick_name
+        from `orderinfo` a
+            left join userinfo b on a.USER_ID = b.USER_ID
+            left join product c on a.PRODUCT_ID = c.PRODUCT_ID
+            left join address d on a.ADDR_ID = d.ADDR_ID
+            left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        where a.order_id = #{value}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select a.*, b.nick_name as user_nick_name, c.product_name, c.img_path, c.product_price, c.PREFERENTIAL_PRICE,
+        d.province, d.area, d.town, d.detail, d.receiver_name, d.receiver_phone, u.nick_name
+        from `orderinfo` a
+        left join userinfo b on a.USER_ID = b.USER_ID
+        left join product c on a.PRODUCT_ID = c.PRODUCT_ID
+        left join address d on a.ADDR_ID = d.ADDR_ID
+        left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="orderId != null and orderId != ''">and a.order_id = #{orderId}</if>
+            <if test="orderNo != null and orderNo != ''">and a.order_no = #{orderNo}</if>
+            <if test="userId != null and userId != ''">and a.user_id = #{userId}</if>
+            <if test="addrId != null and addrId != ''">and a.addr_id = #{addrId}</if>
+            <if test="productId != null and productId != ''">and a.product_id = #{productId}</if>
+            <if test="productUnitPrice != null and productUnitPrice != ''">and a.product_unit_price = #{productUnitPrice}</if>
+            <if test="productCount != null and productCount != ''">and a.product_count = #{productCount}</if>
+            <if test="payTime != null and payTime != ''">and a.pay_time = #{payTime}</if>
+            <if test="payTimeBegin != null and payTimeBegin != ''">and a.pay_time >= #{payTimeBegin}</if>
+            <if test="payTimeEnd != null and payTimeEnd != ''">and a.pay_time &lt;= #{payTimeEnd}</if>
+            <if test="postType != null and postType != ''">and a.post_type = #{postType}</if>
+            <if test="postNo != null and postNo != ''">and a.post_no = #{postNo}</if>
+            <if test="postTime != null and postTime != ''">and a.post_time = #{postTime}</if>
+            <if test="postTimeBegin != null and postTimeBegin != ''">and a.post_time >= #{postTimeBegin}</if>
+            <if test="postTimeEnd != null and postTimeEnd != ''">and a.post_time &lt;= #{postTimeEnd}</if>
+            <if test="status != null and status != ''">and a.status = #{status}</if>
+            <if test="visible != null and visible != ''">and a.visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and a.ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and a.create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and a.create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and a.create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and a.update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and a.update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and a.update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by a.order_id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from orderinfo
+        <where>
+            <if test="orderId != null and orderId != ''">and order_id = #{orderId}</if>
+            <if test="orderNo != null and orderNo != ''">and order_no = #{orderNo}</if>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+            <if test="addrId != null and addrId != ''">and addr_id = #{addrId}</if>
+            <if test="productId != null and productId != ''">and product_id = #{productId}</if>
+            <if test="productUnitPrice != null and productUnitPrice != ''">and product_unit_price = #{productUnitPrice}</if>
+            <if test="productCount != null and productCount != ''">and product_count = #{productCount}</if>
+            <if test="payTime != null and payTime != ''">and pay_time = #{payTime}</if>
+            <if test="payTimeBegin != null and payTimeBegin != ''">and pay_time >= #{payTimeBegin}</if>
+            <if test="payTimeEnd != null and payTimeEnd != ''">and pay_time &lt;= #{payTimeEnd}</if>
+            <if test="postType != null and postType != ''">and post_type = #{postType}</if>
+            <if test="postNo != null and postNo != ''">and post_no = #{postNo}</if>
+            <if test="postTime != null and postTime != ''">and post_time = #{postTime}</if>
+            <if test="postTimeBegin != null and postTimeBegin != ''">and post_time >= #{postTimeBegin}</if>
+            <if test="postTimeEnd != null and postTimeEnd != ''">and post_time &lt;= #{postTimeEnd}</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="visible != null and visible != ''">and visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.earn.helper.entity.Orderinfo" useGeneratedKeys="true" keyProperty="orderId">
+        insert into orderinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">`order_no`,</if>
+            <if test="userId != null">`user_id`,</if>
+            <if test="addrId != null">`addr_id`,</if>
+            <if test="productId != null">`product_id`,</if>
+            <if test="productUnitPrice != null">`product_unit_price`,</if>
+            <if test="productCount != null">`product_count`,</if>
+            <if test="payTime != null">`pay_time`,</if>
+            <if test="postType != null">`post_type`,</if>
+            <if test="postNo != null">`post_no`,</if>
+            <if test="postTime != null">`post_time`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="visible != null">`visible`,</if>
+            <if test="opsUserId != null">`ops_user_id`,</if>
+            <if test="createTime != null">`create_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="addrId != null">#{addrId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="productUnitPrice != null">#{productUnitPrice},</if>
+            <if test="productCount != null">#{productCount},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="postType != null">#{postType},</if>
+            <if test="postNo != null">#{postNo},</if>
+            <if test="postTime != null">#{postTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="opsUserId != null">#{opsUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.earn.helper.entity.Orderinfo">
+        update orderinfo
+        <set>
+            <if test="orderNo != null">`order_no` = #{orderNo},</if>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="addrId != null">`addr_id` = #{addrId},</if>
+            <if test="productId != null">`product_id` = #{productId},</if>
+            <if test="productUnitPrice != null">`product_unit_price` = #{productUnitPrice},</if>
+            <if test="productCount != null">`product_count` = #{productCount},</if>
+            <if test="payTime != null">`pay_time` = #{payTime},</if>
+            <if test="postType != null">`post_type` = #{postType},</if>
+            <if test="postNo != null">`post_no` = #{postNo},</if>
+            <if test="postTime != null">`post_time` = #{postTime},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="visible != null">`visible` = #{visible},</if>
+            <if test="opsUserId != null">`ops_user_id` = #{opsUserId},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="remove">
+        delete from orderinfo
+        where order_id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from orderinfo where order_id in
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+
+</mapper>

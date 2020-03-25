@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earn.helper.mapper.TaskMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Task">
+        <id column="task_id" property="taskId"/>
+        <result column="task_type" property="taskType"/>
+        <result column="task_title" property="taskTitle"/>
+        <result column="task_content" property="taskContent"/>
+        <result column="task_level" property="taskLevel"/>
+        <result column="reward" property="reward"/>
+        <result column="img_paths" property="imgPaths"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="status" property="status"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectListPage" resultMap="BaseResultMap">
+        select
+        a.*,
+        u.user_id,
+        u.nick_name,
+        IFNULL(
+        ( SELECT `status` FROM task_record b WHERE a.TASK_ID = b.TASK_ID AND b.ISSUE = date_format(sysdate(), '%Y%m%d')
+        AND b.USER_ID = #{task.userId,jdbcType=INTEGER} ),
+        - 1
+        ) AS `status`
+        from task a
+        left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            and a.START_TIME &lt;= sysdate()
+            and a.END_TIME &gt;= sysdate()
+            <if test="task.taskLevel != null">
+                and a.TASK_LEVEL = #{task.taskLevel,jdbcType=INTEGER}
+            </if>
+            <if test="task.visible != null">
+                and a.VISIBLE = #{task.visible,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="getTaskById" resultMap="BaseResultMap">
+        select
+            a.*,
+            u.user_id,
+            u.nick_name,
+            IFNULL(
+                    (SELECT `status`
+                     FROM task_record b
+                     WHERE a.TASK_ID = b.TASK_ID AND b.ISSUE = date_format(sysdate(), '%Y%m%d') AND
+                           b.USER_ID = #{userId,jdbcType=INTEGER}),
+                    -1
+            ) AS `status`
+        from task a
+            left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        where
+            a.TASK_ID = #{taskId}
+    </select>
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earn.helper.mapper.ArticleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Article">
+        <id column="ARTICLE_ID" property="articleId"/>
+        <result column="ARTICLE_TITLE" property="articleTitle"/>
+        <result column="ARTICLE_CONTENT" property="articleContent"/>
+        <result column="IMG_PATH" property="imgPath"/>
+        <result column="ARTICLE_TYPE" property="articleType"/>
+        <result column="VISIBLE" property="visible"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectListPage" resultMap="BaseResultMap">
+        select a.article_id, a.article_title, a.img_path, a.create_time, u.user_id, u.nick_name from article a left join
+        userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="article.articleId != null">
+                and a.ARTICLE_ID = #{article.articleId,jdbcType=INTEGER}
+            </if>
+            <if test="article.articleTitle != null">
+                and a.ARTICLE_TITLE = #{article.articleTitle,jdbcType=VARCHAR}
+            </if>
+            <if test="article.articleContent != null">
+                and a.ARTICLE_CONTENT = #{article.articleContent,jdbcType=VARCHAR}
+            </if>
+            <if test="article.articleType != null">
+                and a.ARTICLE_TYPE = #{article.articleType,jdbcType=INTEGER}
+            </if>
+            <if test="article.visible != null">
+                and a.VISIBLE = #{article.visible,jdbcType=INTEGER}
+            </if>
+            <if test="article.opsUserinfo != null and article.opsUserinfo.userId != null">
+                and u.OPS_USER_ID = #{article.opsUserinfo.userId,jdbcType=INTEGER}
+            </if>
+            <if test="article.createTime != null">
+                and a.CREATE_TIME = #{article.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="article.updateTime != null">
+                and a.UPDATE_TIME = #{article.updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by a.ARTICLE_ID desc
+    </select>
+</mapper>

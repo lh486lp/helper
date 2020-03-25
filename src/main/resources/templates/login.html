@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>微广助手管理系统</title>
+    <meta name="keywords" content="微广助手管理系统">
+    <meta name="description" content="微广助手管理系统">
+    <link href="/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.0.0" rel="stylesheet" type="text/css">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html"/>-->
+</head>
+<body class="signin">
+<div class="signinpanel">
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="signin-info">
+                <!--<div class="logopanel m-b">
+                    <!--<h1>earn</h1>-->
+                <!--</div>-->
+                <div class="m-b"></div>
+                <h3>
+                    欢迎使用 <span>微广助手管理系统</span>
+                </h3>
+                <ul class="m-b">
+                    <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <form id="signupForm" method="POST">
+                <h3 class="text-center">用户登录</h3>
+                <p class="m-t-md text-center">欢迎登录微广助手后台管理系统</p>
+                <input type="text" name="username" class="form-control uname"/>
+                <input type="password" name="password" class="form-control pword m-b"/>
+                <button type="submit" class="btn btn-login btn-block">登录</button>
+                <!--按钮模块-->
+                <div class="outside-login">
+                    <div class="outside-login-tit">
+                        <span>分割线</span>
+                    </div>
+                </div>
+                <div>
+                    <div th:if="${param.error}">
+                        <p th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--<div class="signup-footer">-->
+    <!--<div class="pull-left">-->
+    <!--<a class="link" target="_blank" href="http://www.miitbeian.gov.cn">粤ICP备18136074号-1</a>| © 2018 全通智爱 版权所有-->
+    <!--</div>-->
+    <!--</div>-->
+</div>
+<!-- 全局js -->
+<script src="/js/jquery.min.js?v=2.1.4" th:src="@{/js/jquery.min.js?v=2.1.4}"></script>
+<script src="/js/bootstrap.min.js?v=3.3.6" th:src="@{/js/bootstrap.min.js?v=3.3.6}"></script>
+<!-- 自定义js -->
+<script src="/js/content.js?v=1.0.0" th:src="@{/js/content.js?v=1.0.0}"></script>
+<!-- jQuery Validation plugin javascript-->
+<script src="/js/ajax-util.js"></script>
+<script src="/js/plugins/validate/jquery.validate.min.js" th:src="@{/js/plugins/validate/jquery.validate.min.js}"></script>
+<script src="/js/plugins/validate/messages_zh.min.js" th:src="@{/js/plugins/validate/messages_zh.min.js}"></script>
+<script src="/js/plugins/layer/layer.min.js" th:src="@{/js/plugins/layer/layer.min.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        validateRule();
+    });
+
+    function validateRule() {
+        var icon = "<i class='fa fa-times-circle'></i> ";
+        $("#signupForm").validate({
+            rules: {
+                username: {
+                    required: true
+                },
+                password: {
+                    required: true
+                }
+            },
+            messages: {
+                username: {
+                    required: icon + "请输入您的用户名",
+                },
+                password: {
+                    required: icon + "请输入您的密码",
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-content" id="requireBox" style="display: none;">
+                <form class="form-horizontal m-t" id="search">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">主键id：</label>
+                        <div class="col-sm-4">
+                            <input id="productId" name="productId" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">商品名称：</label>
+                        <div class="col-sm-4">
+                            <input id="productName" name="productName" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">价格：</label>
+                        <div class="col-sm-4">
+                            <input id="productPrice" name="productPrice" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">优惠价格：</label>
+                        <div class="col-sm-4">
+                            <input id="preferentialPrice" name="preferentialPrice" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">封面图片：</label>
+                        <div class="col-sm-4">
+                            <input id="imgPath" name="imgPath" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">商品介绍：</label>
+                        <div class="col-sm-4">
+                            <input id="introduction" name="introduction" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">类型：</label>
+                        <div class="col-sm-4">
+                            <input id="productType" name="productType" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">状态：</label>
+                        <div class="col-sm-4">
+                            <input id="visible" name="visible" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">操作人：</label>
+                        <div class="col-sm-4">
+                            <input id="opsUserId" name="opsUserId" placeholder="" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">创建时间：</label>
+                        <div class="col-sm-4">
+                            <input id="createTimeBegin" name="createTimeBegin" type="text" class="form-control"
+                                   placeholder="创建时间始">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="createTimeEnd" name="createTimeEnd" type="text" class="form-control"
+                                   placeholder="创建时间止">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">操作时间：</label>
+                        <div class="col-sm-4">
+                            <input id="updateTimeBegin" name="updateTimeBegin" type="text" class="form-control"
+                                   placeholder="操作时间始">
+                        </div>
+                        <div class="col-sm-4">
+                            <input id="updateTimeEnd" name="updateTimeEnd" type="text" class="form-control"
+                                   placeholder="操作时间止">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="ibox-body">
+                <div class="fixed-table-toolbar">
+                    <div class="columns pull-left">
+                        <button shiro:hasPermission="helper:product:manage:add" type="button" class="btn  btn-primary" onclick="add()">
+                            <i class="fa fa-plus" aria-hidden="true"></i>添加
+                        </button>
+                        <button shiro:hasPermission="helper:product:manage:batchRemove" type="button" class="btn  btn-danger"
+                                onclick="batchRemove()">
+                            <i class="fa fa-trash" aria-hidden="true"></i>删除
+                        </button>
+                    </div>
+                    <div class="columns pull-right">
+                        <button type="button" class="btn btn-outline dropup" style="border-color: #c2c2c2;outline: none;"
+                                onclick="$('#requireBox').slideToggle();">
+                            <i class="glyphicon glyphicon-th icon-th"></i>
+                            <span class="caret"></span>
+                        </button>
+                        <button class="btn btn-success" onclick="reLoad()">查询</button>
+                        <button class="btn btn-default" onclick="$('#search')[0].reset();">清空</button>
+                    </div>
+
+                </div>
+                <table id="exampleTable" data-mobile-responsive="false">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--shiro控制bootstraptable行内按钮看见性 来自bootdo的创新方案 -->
+<div>
+    <script type="text/javascript">
+        var s_edit_h = 'hidden';
+        var s_remove_h = 'hidden';
+        var s_resetPwd_h = 'hidden';
+    </script>
+</div>
+<div shiro:hasPermission="helper:product:manage:edit">
+    <script type="text/javascript">
+        s_edit_h = '';
+    </script>
+</div>
+<div shiro:hasPermission="helper:product:manage:remove">
+    <script type="text/javascript">
+        var s_remove_h = '';
+    </script>
+</div>
+<div shiro:hasPermission="helper:product:manage:resetPwd">
+    <script type="text/javascript">
+        var s_resetPwd_h = '';
+    </script>
+</div>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript" src="/js/appjs/helper/product/list.js"></script>
+</body>
+</html>

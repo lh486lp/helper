@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.earn.helper.system.mapper.TaskRecordDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.TaskRecord">
+        <id column="record_id" property="recordId"/>
+        <result column="user_id" property="userId"/>
+        <result column="task_id" property="taskId"/>
+        <result column="issue" property="issue"/>
+        <result column="reward" property="reward"/>
+        <result column="img_path" property="imgPath"/>
+        <result column="status" property="status"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="ops_user_id" property="opsUserId"/>
+        <association property="userinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="USER_NICK_NAME" property="nickName"/>
+        </association>
+        <association property="task" javaType="com.earn.helper.entity.Task">
+            <id column="TASK_ID" property="taskId"/>
+            <result column="TASK_TITLE" property="taskTitle"/>
+        </association>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="get" resultMap="BaseResultMap">
+        select
+            a.*,
+            b.nick_name AS user_nick_name,
+            c.task_title,
+            u.nick_name
+        FROM
+            `task_record` a
+            LEFT JOIN userinfo b ON a.USER_ID = b.USER_ID
+            LEFT JOIN task c ON a.TASK_ID = c.TASK_ID
+            LEFT JOIN userinfo u ON a.OPS_USER_ID = u.USER_ID
+        where a.record_id = #{value}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+            a.*,
+            b.nick_name AS user_nick_name,
+            c.task_title,
+            u.nick_name
+        FROM
+        `task_record` a
+        LEFT JOIN userinfo b ON a.USER_ID = b.USER_ID
+        LEFT JOIN task c ON a.TASK_ID = c.TASK_ID
+        LEFT JOIN userinfo u ON a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="userId != null and userId != ''">and a.user_id = #{userId}</if>
+            <if test="taskId != null and taskId != ''">and a.task_id = #{taskId}</if>
+            <if test="issue != null and issue != ''">and a.issue = #{issue}</if>
+            <if test="reward != null and reward != ''">and a.reward = #{reward}</if>
+            <if test="imgPath != null and imgPath != ''">and a.img_path = #{imgPath}</if>
+            <if test="status != null and status != ''">and a.status = #{status}</if>
+            <if test="visible != null and visible != ''">and a.visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and a.ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and a.create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and a.create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and a.create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and a.update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and a.update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and a.update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by record_id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from task_record
+        <where>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+            <if test="taskId != null and taskId != ''">and task_id = #{taskId}</if>
+            <if test="issue != null and issue != ''">and issue = #{issue}</if>
+            <if test="reward != null and reward != ''">and reward = #{reward}</if>
+            <if test="imgPath != null and imgPath != ''">and img_path = #{imgPath}</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="visible != null and visible != ''">and visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.earn.helper.entity.TaskRecord">
+        insert into task_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">`user_id`,</if>
+            <if test="taskId != null">`task_id`,</if>
+            <if test="issue != null">`issue`,</if>
+            <if test="reward != null">`reward`,</if>
+            <if test="imgPath != null">`img_path`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="visible != null">`visible`,</if>
+            <if test="opsUserId != null">`ops_user_id`,</if>
+            <if test="createTime != null">`create_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="issue != null">#{issue},</if>
+            <if test="reward != null">#{reward},</if>
+            <if test="imgPath != null">#{imgPath},</if>
+            <if test="status != null">#{status},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="opsUserId != null">#{opsUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.earn.helper.entity.TaskRecord">
+        update task_record
+        <set>
+            <if test="taskId != null">`task_id` = #{taskId},</if>
+            <if test="issue != null">`issue` = #{issue},</if>
+            <if test="reward != null">`reward` = #{reward},</if>
+            <if test="imgPath != null">`img_path` = #{imgPath},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="visible != null">`visible` = #{visible},</if>
+            <if test="opsUserId != null">`ops_user_id` = #{opsUserId},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+        </set>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="remove">
+        delete from task_record
+        where record_id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from task_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+</mapper>

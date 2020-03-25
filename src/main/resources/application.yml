@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/helper?autoReconnect=true&characterEncoding=utf8&useSSL=false&useUnicode=true
+    username: root
+    password:
+  thymeleaf:
+    mode: LEGACYHTML5
+    cache: false
+  resources:
+    static-locations: file:C:/temp/
+    # static-locations: file:/tmp/
+
+mybatis-plus:
+  # 输入sql到控制台
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # 此处有坑 单模块加载也需要配置*(classpath 紧挨着的星) 解决自定义SQL无法执行
+  mapper-locations: classpath:com/earn/**/mapper/xml/*Mapper.xml
+  type-enums-package: com.earn.helper.enume
+
+uploadPath: C:/temp/upload/helper/
+# uploadPath: /data/helper/upload/

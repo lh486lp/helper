@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.earn.helper.system.mapper.ProductDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Product">
+        <id column="PRODUCT_ID" property="productId"/>
+        <result column="PRODUCT_NAME" property="productName"/>
+        <result column="PRODUCT_PRICE" property="productPrice"/>
+        <result column="PREFERENTIAL_PRICE" property="preferentialPrice"/>
+        <result column="IMG_PATH" property="imgPath"/>
+        <result column="IMG_PATHS" property="imgPaths"/>
+        <result column="SPECIFICATION" property="specification"/>
+        <result column="INTRODUCTION" property="introduction"/>
+        <result column="CONTENT" property="content"/>
+        <result column="PRODUCT_TYPE" property="productType"/>
+        <result column="VISIBLE" property="visible"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="get" resultType="com.earn.helper.entity.Product">
+        select
+            a.*,
+            u.nick_name
+        from product a left join
+            userinfo u on a.OPS_USER_ID = u.USER_ID
+        where a.product_id = #{value}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        a.product_id,
+        a.product_name,
+        a.product_price,
+        a.preferential_price,
+        a.img_path,
+        a.introduction,
+        a.product_type,
+        a.visible,
+        a.create_time,
+        a.update_time,
+        u.nick_name
+        from product a left join
+        userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="productId != null and productId != ''">and a.product_id = #{productId}</if>
+            <if test="productName != null and productName != ''">and a.product_name = #{productName}</if>
+            <if test="productPrice != null and productPrice != ''">and a.product_price = #{productPrice}</if>
+            <if test="preferentialPrice != null and preferentialPrice != ''">and a.preferential_price = #{preferentialPrice}</if>
+            <if test="imgPath != null and imgPath != ''">and a.img_path = #{imgPath}</if>
+            <if test="imgPaths != null and imgPaths != ''">and a.img_paths = #{imgPaths}</if>
+            <if test="specification != null and specification != ''">and a.specification = #{specification}</if>
+            <if test="introduction != null and introduction != ''">and a.introduction = #{introduction}</if>
+            <if test="content != null and content != ''">and a.content = #{content}</if>
+            <if test="productType != null and productType != ''">and a.product_type = #{productType}</if>
+            <if test="visible != null and visible != ''">and a.visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and a.ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and a.create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and a.create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and a.create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and a.update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and a.update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and a.update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by product_id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from product
+        <where>
+            <if test="productId != null and productId != ''">and product_id = #{productId}</if>
+            <if test="productName != null and productName != ''">and product_name = #{productName}</if>
+            <if test="productPrice != null and productPrice != ''">and product_price = #{productPrice}</if>
+            <if test="preferentialPrice != null and preferentialPrice != ''">and preferential_price = #{preferentialPrice}</if>
+            <if test="imgPath != null and imgPath != ''">and img_path = #{imgPath}</if>
+            <if test="imgPaths != null and imgPaths != ''">and img_paths = #{imgPaths}</if>
+            <if test="specification != null and specification != ''">and specification = #{specification}</if>
+            <if test="introduction != null and introduction != ''">and introduction = #{introduction}</if>
+            <if test="content != null and content != ''">and content = #{content}</if>
+            <if test="productType != null and productType != ''">and product_type = #{productType}</if>
+            <if test="visible != null and visible != ''">and visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.earn.helper.entity.Product" useGeneratedKeys="true" keyProperty="productId">
+        insert into product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productName != null">`product_name`,</if>
+            <if test="productPrice != null">`product_price`,</if>
+            <if test="preferentialPrice != null">`preferential_price`,</if>
+            <if test="imgPath != null">`img_path`,</if>
+            <if test="imgPaths != null">`img_paths`,</if>
+            <if test="specification != null">`specification`,</if>
+            <if test="introduction != null">`introduction`,</if>
+            <if test="content != null">`content`,</if>
+            <if test="productType != null">`product_type`,</if>
+            <if test="visible != null">`visible`,</if>
+            <if test="opsUserId != null">`ops_user_id`,</if>
+            <if test="createTime != null">`create_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productName != null">#{productName},</if>
+            <if test="productPrice != null">#{productPrice},</if>
+            <if test="preferentialPrice != null">#{preferentialPrice},</if>
+            <if test="imgPath != null">#{imgPath},</if>
+            <if test="imgPaths != null">#{imgPaths},</if>
+            <if test="specification != null">#{specification},</if>
+            <if test="introduction != null">#{introduction},</if>
+            <if test="content != null">#{content},</if>
+            <if test="productType != null">#{productType},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="opsUserId != null">#{opsUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.earn.helper.entity.Product">
+        update product
+        <set>
+            <if test="productName != null">`product_name` = #{productName},</if>
+            <if test="productPrice != null">`product_price` = #{productPrice},</if>
+            <if test="preferentialPrice != null">`preferential_price` = #{preferentialPrice},</if>
+            <if test="imgPath != null">`img_path` = #{imgPath},</if>
+            <if test="imgPaths != null">`img_paths` = #{imgPaths},</if>
+            <if test="specification != null">`specification` = #{specification},</if>
+            <if test="introduction != null">`introduction` = #{introduction},</if>
+            <if test="content != null">`content` = #{content},</if>
+            <if test="productType != null">`product_type` = #{productType},</if>
+            <if test="visible != null">`visible` = #{visible},</if>
+            <if test="opsUserId != null">`ops_user_id` = #{opsUserId},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+        </set>
+        where product_id = #{productId}
+    </update>
+
+    <delete id="remove">
+        delete from product
+        where product_id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from product where product_id in
+        <foreach item="productId" collection="array" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </delete>
+
+</mapper>

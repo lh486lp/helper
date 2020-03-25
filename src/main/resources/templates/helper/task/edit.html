@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal m-t" id="signupForm">
+                        <input id="taskId" name="taskId" th:value="${task.taskId}" type="hidden">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">类型：</label>
+                            <div class="col-sm-8">
+                                <select id="taskType" name="taskType" class="form-control">
+                                    <option value="wgts" th:selected="${task.taskType.name() == 'wgts'}">微广推手</option>
+                                    <option value="qt" th:selected="${task.taskType.name() == 'qt'}">其他任务</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">任务标题：</label>
+                            <div class="col-sm-8">
+                                <input id="taskTitle" name="taskTitle" th:value="${task.taskTitle}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">任务内容：</label>
+                            <div class="col-sm-8">
+                                <input id="taskContent" name="taskContent" th:value="${task.taskContent}" class="form-control" type="hidden">
+                                <div class="ibox-content no-padding">
+                                    <div id="content_sn" class="summernote"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">等级：</label>
+                            <div class="col-sm-8">
+                                <select id="taskLevel" name="taskLevel" class="form-control">
+                                    <option value="2" th:selected="${task.taskLevel == 2}">金牌</option>
+                                    <option value="3" th:selected="${task.taskLevel == 3}">钻石</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">任务奖励：</label>
+                            <div class="col-sm-8">
+                                <input id="reward" name="reward" th:value="${task.reward}" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">任务图片：</label>
+                            <div class="col-sm-8">
+                                <input id="imgPaths" name="imgPaths" th:value="${task.imgPaths}" class="form-control" type="text">
+                                <div class='btn btn-primary' style="position: relative">
+                                    <span>选择文件</span>
+                                    <input type="file" multiple
+                                           id="imgfiles"
+                                           enctype="multipart/form-data"
+                                           accept="image/*"
+                                           style="position: absolute;top: 0;right: 0;bottom: 0;left: 0;width: 100%;z-index: 2;opacity:0;"
+                                           onchange="groupfolder.onchangeTexts('imgfiles', 'onchangeTexts', 'previews')">
+                                </div>
+                                <a class="btn btn-primary" id="btn_uploadimgs" onclick="groupfolder.uploadimgs('imgfiles','imgPaths');">上传图片</a>
+                                <div id="previews" class="preview">
+                                    <div class="img-item" style="display: inline-block;" th:each="path : ${imgPaths}">
+                                        <span class="delete-old" th:data-filename="${path}">x</span>
+                                        <img th:src="@{/system/sysFile/getFile?fileName={filename}(filename=${path})}" class="img-preview-sm"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">开始时间：</label>
+                            <div class="col-sm-8">
+                                <input id="startTime" name="startTime" th:value="${task.startTime} !=null ? ${#dates.format(task.startTime,'yyyy-MM-dd HH:mm:ss')}"
+                                       class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">结束时间：</label>
+                            <div class="col-sm-8">
+                                <input id="endTime" name="endTime" th:value="${task.endTime} !=null ? ${#dates.format(task.endTime,'yyyy-MM-dd HH:mm:ss')}" class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="/js/appjs/helper/task/edit.js">
+</script>
+</body>
+</html>

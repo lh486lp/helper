@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earn.helper.mapper.AddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Address">
+        <id column="addr_id" property="addrId"/>
+        <result column="user_id" property="userId"/>
+        <result column="receiver_name" property="receiverName"/>
+        <result column="receiver_phone" property="receiverPhone"/>
+        <result column="province" property="province"/>
+        <result column="area" property="area"/>
+        <result column="town" property="town"/>
+        <result column="detail" property="detail"/>
+        <result column="default_addr" property="defaultAddr"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="userinfo" javaType="com.earn.helper.entity.Userinfo">
+            <result column="USER_NICK_NAME" property="nickName"/>
+        </association>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="selectListPage" resultMap="BaseResultMap">
+        select a.*, b.nick_name as user_nick_name, u.nick_name
+        from `address` a
+        left join userinfo b on a.USER_ID = b.USER_ID
+        left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="address.addrId != null">
+                and a.ADDR_ID = #{address.addrId,jdbcType=INTEGER}
+            </if>
+            <if test="address.userinfo != null and address.userinfo.userId != null">
+                and a.USER_ID = #{address.userId,jdbcType=VARCHAR}
+            </if>
+            <if test="address.receiverName != null">
+                and a.RECEIVER_NAME = #{address.receiverName,jdbcType=VARCHAR}
+            </if>
+            <if test="address.receiverPhone != null">
+                and a.RECEIVER_PHONE = #{address.receiverPhone,jdbcType=INTEGER}
+            </if>
+            <if test="address.province != null">
+                and a.PROVINCE = #{address.province,jdbcType=INTEGER}
+            </if>
+            <if test="address.area != null">
+                and a.AREA = #{address.area,jdbcType=INTEGER}
+            </if>
+            <if test="address.town != null">
+                and a.TOWN = #{address.town,jdbcType=INTEGER}
+            </if>
+            <if test="address.detail != null">
+                and a.DETAIL = #{address.detail,jdbcType=INTEGER}
+            </if>
+            <if test="address.defaultAddr != null">
+                and a.DEFAULT_ADDR = #{address.defaultAddr,jdbcType=INTEGER}
+            </if>
+            <if test="address.visible != null">
+                and a.VISIBLE = #{address.visible,jdbcType=INTEGER}
+            </if>
+            <if test="address.opsUserinfo != null and address.opsUserinfo.userId != null">
+                and u.OPS_USER_ID = #{address.opsUserinfo.userId,jdbcType=INTEGER}
+            </if>
+            <if test="address.createTime != null">
+                and a.CREATE_TIME = #{address.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="address.updateTime != null">
+                and a.UPDATE_TIME = #{address.updateTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+        order by a.ADDR_ID desc
+    </select>
+</mapper>

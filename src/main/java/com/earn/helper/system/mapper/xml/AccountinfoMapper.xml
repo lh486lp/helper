@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.earn.helper.system.mapper.AccountinfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.earn.helper.entity.Accountinfo">
+        <id column="account_id" property="accountId"/>
+        <result column="user_id" property="userId"/>
+        <result column="type" property="type"/>
+        <result column="type" property="accountType" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="type_id" property="typeId"/>
+        <result column="amount" property="amount"/>
+        <result column="is_gain" property="isGain"/>
+        <result column="pay_type" property="payType"/>
+        <result column="img_path" property="imgPath"/>
+        <result column="visible" property="visible"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="userinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="USER_ID" property="userId"/>
+            <result column="NICK_NAME" property="nickName"/>
+        </association>
+        <association property="opsUserinfo" javaType="com.earn.helper.entity.Userinfo">
+            <id column="OPS_USER_ID" property="userId"/>
+            <result column="OPS_NICK_NAME" property="nickName"/>
+        </association>
+    </resultMap>
+
+    <select id="get" resultMap="BaseResultMap">
+        select
+            a.*,
+            b.user_id,
+            b.nick_name,
+            u.user_id   as ops_user_id,
+            u.nick_name as ops_nick_name
+        from accountinfo a
+            left join userinfo b on a.USER_ID = b.USER_ID
+            left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        where a.account_id = #{value}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        a.*,
+        b.user_id,
+        b.nick_name,
+        u.user_id   as ops_user_id,
+        u.nick_name as ops_nick_name
+        from accountinfo a
+        left join userinfo b on a.USER_ID = b.USER_ID
+        left join userinfo u on a.OPS_USER_ID = u.USER_ID
+        <where>
+            <if test="accountId != null and accountId != ''">and a.account_id = #{accountId}</if>
+            <if test="userId != null and userId != ''">and a.user_id = #{userId}</if>
+            <if test="type != null and type != ''">and a.type = #{type}</if>
+            <if test="typeId != null and typeId != ''">and a.type_id = #{typeId}</if>
+            <if test="amount != null and amount != ''">and a.amount = #{amount}</if>
+            <if test="isGain != null and isGain != ''">and a.is_gain = #{isGain}</if>
+            <if test="payType != null and payType != ''">and a.pay_type = #{payType}</if>
+            <if test="imgPath != null and imgPath != ''">and a.img_path = #{imgPath}</if>
+            <if test="visible != null and visible != ''">and a.visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and a.ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and a.create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and a.create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and a.create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and a.update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and a.update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and a.update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by a.account_id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from accountinfo
+        <where>
+            <if test="accountId != null and accountId != ''">and account_id = #{accountId}</if>
+            <if test="userId != null and userId != ''">and user_id = #{userId}</if>
+            <if test="type != null and type != ''">and type = #{type}</if>
+            <if test="typeId != null and typeId != ''">and type_id = #{typeId}</if>
+            <if test="amount != null and amount != ''">and amount = #{amount}</if>
+            <if test="isGain != null and isGain != ''">and is_gain = #{isGain}</if>
+            <if test="payType != null and payType != ''">and pay_type = #{payType}</if>
+            <if test="imgPath != null and imgPath != ''">and img_path = #{imgPath}</if>
+            <if test="visible != null and visible != ''">and visible = #{visible}</if>
+            <if test="opsUserId != null and opsUserId != ''">and ops_user_id = #{opsUserId}</if>
+            <if test="createTime != null and createTime != ''">and create_time = #{createTime}</if>
+            <if test="createTimeBegin != null and createTimeBegin != ''">and create_time >= #{createTimeBegin}</if>
+            <if test="createTimeEnd != null and createTimeEnd != ''">and create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTime != null and updateTime != ''">and update_time = #{updateTime}</if>
+            <if test="updateTimeBegin != null and updateTimeBegin != ''">and update_time >= #{updateTimeBegin}</if>
+            <if test="updateTimeEnd != null and updateTimeEnd != ''">and update_time &lt;= #{updateTimeEnd}</if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.earn.helper.entity.Accountinfo" useGeneratedKeys="true" keyProperty="accountId">
+        insert into accountinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">`user_id`,</if>
+            <if test="type != null">`type`,</if>
+            <if test="typeId != null">`type_id`,</if>
+            <if test="amount != null">`amount`,</if>
+            <if test="isGain != null">`is_gain`,</if>
+            <if test="payType != null">`pay_type`,</if>
+            <if test="imgPath != null">`img_path`,</if>
+            <if test="visible != null">`visible`,</if>
+            <if test="opsUserId != null">`ops_user_id`,</if>
+            <if test="createTime != null">`create_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="isGain != null">#{isGain},</if>
+            <if test="payType != null">#{payType},</if>
+            <if test="imgPath != null">#{imgPath},</if>
+            <if test="visible != null">#{visible},</if>
+            <if test="opsUserId != null">#{opsUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.earn.helper.entity.Accountinfo">
+        update accountinfo
+        <set>
+            <if test="userId != null">`user_id` = #{userId},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="typeId != null">`type_id` = #{typeId},</if>
+            <if test="amount != null">`amount` = #{amount},</if>
+            <if test="isGain != null">`is_gain` = #{isGain},</if>
+            <if test="payType != null">`pay_type` = #{payType},</if>
+            <if test="imgPath != null">`img_path` = #{imgPath},</if>
+            <if test="visible != null">`visible` = #{visible},</if>
+            <if test="opsUserId != null">`ops_user_id` = #{opsUserId},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+        </set>
+        where account_id = #{accountId}
+    </update>
+
+    <delete id="remove">
+        delete from accountinfo
+        where account_id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from accountinfo where account_id in
+        <foreach item="accountId" collection="array" open="(" separator="," close=")">
+            #{accountId}
+        </foreach>
+    </delete>
+
+</mapper>
